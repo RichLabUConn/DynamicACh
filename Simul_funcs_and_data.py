@@ -236,7 +236,7 @@ def record_spike(voltage, spike_threshold, step,
     return should_record_spike
 
 def simulation(EI_connectivity_strength, IE_connectivity_strength, II_connectivity_strength,
-               EE_connectivity_strength, current_modulation, inh_modulation, t_max, dt = 0.1, static_g_ks=None, IE_connectivity_shift=None, g_ks_zero_time=None):
+               EE_connectivity_strength, current_modulation, inh_modulation, t_max, dt = 0.1, static_g_ks=None, g_ks_zero_time=None):
     """
     This function sets up a network with 800 excitatory and 200 inhibitory neurons,
     using the equations specified under Neuron Model in Materials and Methods.
@@ -263,8 +263,6 @@ def simulation(EI_connectivity_strength, IE_connectivity_strength, II_connectivi
         dt (float, optional): Integration time step in ms (default is 0.1 ms)
 
         static g_ks (float, optional): Specify to set g_ks to any constant value in mS for all cells (will not override inh_modulation).
-
-        IE_connectivity_shift (tuple (int, float), optional): Allows modulation of the IE synaptic weight during the simulation. The first element of the tuple specifies the time (in ms) at which the change should occur, and the second element specifies the magnitude of the change in synaptic weight (in mS) as a float.
 
         g_ks_zero_time (int, optional): Time in ms when g_ks should reach 0. Must be greater than 1000 ms and lower than t_max
 
@@ -354,10 +352,6 @@ def simulation(EI_connectivity_strength, IE_connectivity_strength, II_connectivi
         if index[0] == index[1]:  # No self-synapses
             g_syn[index[0] + number_of_exc_neurons, index[1] + number_of_exc_neurons] = 0
 
-    if IE_connectivity_shift is not None: # Set up IE perturbation if specified
-        perturb_time_ms, perturb_weight = IE_connectivity_shift
-        perturb_step = int(perturb_time_ms / dt)
-
     # Set Applied Current
     # Excitatory neurons are selected to fire at a frequency randomly between 45 and 55Hz
     for neuron_no in range(number_of_exc_neurons):
@@ -412,12 +406,6 @@ def simulation(EI_connectivity_strength, IE_connectivity_strength, II_connectivi
                 if (dt * i - spike_time) < 50 and dt * i > 100:
                     time_difference = dt * i - spike_time
                     i_hyp[neuron_no + number_of_exc_neurons] += double_exp_list2[int(round(time_difference, 2) * 100)]
-
-        # IE Connectivity shift applied at required time if needed
-        if IE_connectivity_shift is not None and i >= perturb_step:
-            ie_g_syn = g_syn[:number_of_exc_neurons, number_of_exc_neurons:number_of_neurons]
-            nonzero_indices = np.nonzero(ie_g_syn)
-            ie_g_syn[nonzero_indices] += perturb_weight
 
         # Modify g_syn connectivity matrix to include respective (voltage - E_syn) term
         # See equation under Network Structure in Materials and Methods
