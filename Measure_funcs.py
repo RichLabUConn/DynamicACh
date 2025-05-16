@@ -3,7 +3,7 @@ import numpy as np
 # Functions used for measures
 def synch_array_generator(neuron_list, t_max, neuron_type, g_ks_t, dt=0.1, bin_size=None):
     """
-    This function calculates the Golomb synchrony measure and average g_ks values
+    This function calculates the Golomb synchrony measure (Golomb and Rinzel, 1993/1994) and average g_ks values
     over successive time bins for a specified neuron population (excitatory or inhibitory).
 
     Inputs:
