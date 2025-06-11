@@ -1,5 +1,5 @@
 # DynamicACh
-Code associated with Sibi Pandian's undergraduate research and associate publication. 
+Code associated with the manuscript "Dynamic cholinergic signaling differentially desynchronizes cortical microcircuits dependent on modulation rate and network topology." 
 
 The repository contains Python 3 code to generate each of the figures in the paper. Aside from using basic Python libraries 
 such as NumPy, the repository contains custom modules that are used in the figure generation codes-
